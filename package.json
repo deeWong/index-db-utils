@@ -4,7 +4,7 @@
   "description": "use indexDB simple",
   "repository": {
     "type": "git",
-    "url": "https://github.com/deeWong/indexDB"
+    "url": "https://github.com/deeWong/index-db-utils"
   },
   "author": "",
   "license": "ISC",

@@ -1,4 +1,4 @@
-# indexDB
+# index-db-utils
 
 ## 说明
 indexDB 语法糖，更加方便使用 indexDB 做本地存储
@@ -28,4 +28,4 @@ if (isSupport()) {
 ```
 
 ## Demo
-详询 [Demo](https://github.com/deeWong/indexDB/tree/master/demo)
+详询 [Demo](https://github.com/deeWong/index-db-utils/tree/master/demo)

@@ -4,16 +4,10 @@ const indexedDB =
   window.webkitIndexedDB ||
   window.msIndexedDB;
 
-/* 是否支持indexDB */
 export function isSupport() {
   return !!indexedDB;
 }
 
-/**
- *  @desc 打开数据库
- *  @param databaseName 数据库名称{string}
- *  @param version 数据库的版本，默认无须传入{number}
- * */
 function openDB(
   databaseName,
   version = undefined
@@ -42,11 +36,6 @@ function openDB(
   });
 }
 
-/**
- *  @desc 连接数据库
- *  @param databaseName 数据库名称{string}
- *  @param version 数据库的版本，默认无须传入{number}
- * */
 export async function connectDB(databaseName, version) {
   const db = await openDB(databaseName, version);
   return createDBModel(db);
@@ -54,12 +43,6 @@ export async function connectDB(databaseName, version) {
 
 function createDBModel(db) {
   let dbModel = db;
-  /**
-   * @desc 设值函数
-   * @param tableName 表名{string}
-   * @param value 设置的值{any[]}
-   * @param keyPath 唯一值的path，非必传{any}
-   */
   function setObject(
     tableName,
     value,
@@ -115,11 +98,6 @@ function createDBModel(db) {
     });
   }
 
-  /**
-   * @desc 取值函数
-   * @param tableName 表名{string}
-   * @param key 如果需要取表中某一条数据，可以传入key值{any}
-   */
   function getObject(tableName, key = undefined) {
     return new Promise((res, rej) => {
       if (dbModel.objectStoreNames.contains(tableName)) {
