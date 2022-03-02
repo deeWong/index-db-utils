@@ -14,7 +14,7 @@ declare interface Ret {
    * @param key 如果需要取表中某一条数据，可以传入key值{any}
    * @return Promise<T[]>
    */
-  get<T>(tableName: string, key: any): Promise<T[]>;
+  get<T>(tableName: string, key?: any): Promise<T[]>;
 
   /**
    * @desc 设值函数
@@ -23,7 +23,7 @@ declare interface Ret {
    * @param keyPath 唯一值的path，非必传{any}
    * @return Promise<boolean>
    */
-  set<T>(tableName: string, value: any[], keyPath: any): Promise<boolean>;
+  set<T>(tableName: string, value: any[], keyPath?: any): Promise<boolean>;
   db: IDBDatabase;
 }
 
@@ -31,7 +31,7 @@ declare interface Ret {
  * @desc 是否支持indexDB
  * @return boolean
  */
-declare function isSupport(): boolean;
+export declare function isSupport(): boolean;
 
 /**
  * @desc 打开数据库
@@ -50,11 +50,11 @@ declare function openDB(
  * @param version 数据库的版本，默认无须传入{number}
  * @return
  */
-declare function connectDB(databaseName: string, version?: number): Ret;
+export declare function connectDB(databaseName: string, version?: number): Ret;
 
 /**
  * @desc 生成一个DBModel
  * @param db 数据库实例
- * @return Ret 
+ * @return Ret
  */
 declare function createDBModel(db: IDBDatabase): Ret;

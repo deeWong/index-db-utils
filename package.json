@@ -1,8 +1,7 @@
 {
   "name": "index-db-utils",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "use indexDB simple",
-  "main": "src",
   "repository": {
     "type": "git",
     "url": "https://github.com/deeWong/indexDB"
@@ -20,5 +19,6 @@
   "devDependencies": {
     "tern": "^0.24.3"
   },
+  "main": "./src/index.js",
   "typings": "src/index.d.ts"
 }
