@@ -28,4 +28,4 @@ if (isSupport()) {
 ```
 
 ## Demo
-详询 [Demo](https://github.com/deeWong/auto-nginx-hosts/tree/master/demo)
+详询 [Demo](https://github.com/deeWong/indexDB/tree/master/demo)

@@ -1,8 +1,8 @@
 const indexedDB =
   window.indexedDB ||
-  (window as any).mozIndexedDB ||
-  (window as any).webkitIndexedDB ||
-  (window as any).msIndexedDB;
+  window.mozIndexedDB ||
+  window.webkitIndexedDB ||
+  window.msIndexedDB;
 
 /* 是否支持indexDB */
 export function isSupport() {
@@ -14,28 +14,29 @@ export function isSupport() {
  *  @param databaseName 数据库名称{string}
  *  @param version 数据库的版本，默认无须传入{number}
  * */
-export function openDB(
+function openDB(
   databaseName,
   version = undefined
-): Promise<IDBDatabase> {
+) {
   return new Promise((res, rej) => {
     if (!isSupport()) rej(new Error("当前浏览器不支持indexDB"));
     const request = indexedDB.open(databaseName, version);
     request.onerror = function (event) {
-      console.log("数据库报错");
+      console.log("onerror");
       console.error(event);
     };
 
-    let db: IDBDatabase;
+    let db;
 
     request.onsuccess = function (event) {
       db = request.result;
-      console.log("数据库打开成功");
+      console.log("onsuccess");
       res(db);
     };
 
     request.onupgradeneeded = function (event) {
       db = event.target.result;
+      console.log("onupgradeneeded");
       res(db);
     };
   });
@@ -46,15 +47,12 @@ export function openDB(
  *  @param databaseName 数据库名称{string}
  *  @param version 数据库的版本，默认无须传入{number}
  * */
-export async function connectDB(
-  databaseName: string,
-  version: number = undefined
-) {
+export async function connectDB(databaseName, version) {
   const db = await openDB(databaseName, version);
   return createDBModel(db);
 }
 
-function createDBModel(db: IDBDatabase) {
+function createDBModel(db) {
   let dbModel = db;
   /**
    * @desc 设值函数
@@ -62,13 +60,13 @@ function createDBModel(db: IDBDatabase) {
    * @param value 设置的值{any[]}
    * @param keyPath 唯一值的path，非必传{any}
    */
-  function setObject<T>(
-    tableName: string,
-    value: T[],
-    keyPath: any = undefined
-  ): Promise<boolean> {
+  function setObject(
+    tableName,
+    value,
+    keyPath = undefined
+  ) {
     return new Promise(async (res, rej) => {
-      let objectStore: IDBObjectStore;
+      let objectStore;
       if (!dbModel.objectStoreNames.contains(tableName)) {
         try {
           dbModel.close();
@@ -88,6 +86,12 @@ function createDBModel(db: IDBDatabase) {
           .transaction(tableName, "readwrite")
           .objectStore(tableName);
       }
+
+      objectStore.transaction.oncomplete = () => {
+        console.log('set transaction complete');
+        res(true);
+      }
+
       /* 新增 */
       let index = 0;
       let length = value.length;
@@ -96,7 +100,6 @@ function createDBModel(db: IDBDatabase) {
         index++;
         if (index === length) {
           if (errorList.length > 0) console.error("写入失败数据", errorList);
-          res(true);
         }
       };
       value.forEach((item) => {
@@ -117,35 +120,32 @@ function createDBModel(db: IDBDatabase) {
    * @param tableName 表名{string}
    * @param key 如果需要取表中某一条数据，可以传入key值{any}
    */
-  function getObject<T>(tableName: string, key: any = undefined): Promise<T[]> {
+  function getObject(tableName, key = undefined) {
     return new Promise((res, rej) => {
       if (dbModel.objectStoreNames.contains(tableName)) {
         var objectStore = dbModel.transaction(tableName).objectStore(tableName);
+        let result;
         if (key) {
           var request = objectStore.get(key);
           request.onerror = function (event) {
             rej(new Error("事务失败"));
           };
-
           request.onsuccess = function (event) {
-            if (request.result) {
-              res([request.result]);
-            } else {
-              res(undefined);
-            }
+            if (request.result) result = [request.result];
           };
         } else {
-          const obj = [];
-          objectStore.openCursor().onsuccess = function (event: any) {
-            const cursor: IDBCursorWithValue = event.target.result;
+          result = [];
+          objectStore.openCursor().onsuccess = function (event) {
+            const cursor = event.target.result;
             if (cursor) {
-              obj.push(cursor.value);
+              result.push(cursor.value);
               cursor.continue();
-            } else {
-              console.log("没有更多数据了！");
-              res(obj);
             }
           };
+        }
+        objectStore.transaction.oncomplete = () => {
+          console.log('get transaction complete');
+          res(result);
         }
       } else {
         res(null);
@@ -156,6 +156,6 @@ function createDBModel(db: IDBDatabase) {
   return {
     get: getObject,
     set: setObject,
-    db,
+    db: dbModel,
   };
 }

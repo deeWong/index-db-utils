@@ -16,5 +16,9 @@
   "dependencies": {},
   "engines": {
     "node": ">=8.9.0"
-  }
+  },
+  "devDependencies": {
+    "tern": "^0.24.3"
+  },
+  "typings": "src/index.d.ts"
 }
