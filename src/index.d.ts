@@ -15,6 +15,11 @@ declare interface Ret {
    * @return Promise<T[]>
    */
   get<T>(tableName: string, key?: any): Promise<T[]>;
+  get<T>(obj: {
+    tableName: string;
+    key?: any;
+    returnType?: "array" | "object";
+  }): Promise<any> | Promise<{ [string]: T }>;
 
   /**
    * @desc 设值函数
@@ -23,8 +28,15 @@ declare interface Ret {
    * @param keyPath 唯一值的path，非必传{any}
    * @return Promise<boolean>
    */
-  set<T>(tableName: string, value: any[], keyPath?: any): Promise<boolean>;
+  set(tableName: string, value: any[], keyPath?: any): Promise<boolean>;
+  set(obj: {
+    tableName: string;
+    value: any[];
+    keyPath?: any;
+    passType?: "array" | "object";
+  }): Promise<boolean>;
   db: IDBDatabase;
+  clear(tableName: string, keys?: any[]): Promise<boolean>;
 }
 
 /**
